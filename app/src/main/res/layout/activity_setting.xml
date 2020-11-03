@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="458dp"
+        android:layout_marginEnd="278dp"
+        android:layout_marginBottom="7dp"
+        android:text="Change Password"
+        app:layout_constraintBottom_toTopOf="@+id/editCurrPass"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editCurrPass"
+        android:layout_width="260dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="130dp"
+        android:layout_marginBottom="202dp"
+        android:ems="10"
+        android:hint="Enter Current Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/editNewPass"
+        android:layout_width="257dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="133dp"
+        android:layout_marginBottom="146dp"
+        android:ems="10"
+        android:hint="Enter New Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editCurrPass" />
+
+    <EditText
+        android:id="@+id/editConfPass"
+        android:layout_width="256dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="134dp"
+        android:layout_marginBottom="96dp"
+        android:ems="10"
+        android:hint="Enter New Password Again"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editNewPass" />
+
+    <Button
+        android:id="@+id/btnChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="107dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="146dp"
+        android:layout_marginBottom="28dp"
+        android:text="Change Password"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editConfPass" />
+</androidx.constraintlayout.widget.ConstraintLayout>
