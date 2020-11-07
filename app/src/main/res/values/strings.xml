@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">1Step</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="register">Register Now</string>
+    <string name="_1step">1Step</string>
+    <string name="footstep_tracker">Footstep Tracker</string>
+    <string name="first_time">First time?</string>
+    <string name="appicon">appIcon</string>
 </resources>
