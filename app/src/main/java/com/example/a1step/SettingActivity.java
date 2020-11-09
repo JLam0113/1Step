@@ -81,5 +81,11 @@ public class SettingActivity extends AppCompatActivity {
                 });
             }
         });
+
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        auth.getInstance().signOut();
     }
 }

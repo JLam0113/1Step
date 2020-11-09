@@ -14,6 +14,9 @@ public class User {
         this.tSteps = tSteps;
         this.tCalories = tCalories;
     }
+    public User(){
+
+    }
 
     public void setEmail(String email){
         this.email = email;

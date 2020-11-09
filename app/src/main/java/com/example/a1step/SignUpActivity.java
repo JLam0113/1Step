@@ -62,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 Toast.LENGTH_SHORT).show();
                                     } else {
                                         User user = new User(email2, 0,0);
-                                        final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
+                                        final DatabaseReference userNode = db.getReference("users/" + auth.getCurrentUser().getUid());
                                         userNode.setValue(user);
                                         startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
                                         finish();

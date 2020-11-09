@@ -8,4 +8,6 @@
     <string name="footstep_tracker">Footstep Tracker</string>
     <string name="first_time">First time?</string>
     <string name="appicon">appIcon</string>
+    <string name="totalSteps">Total Steps</string>
+    <string name="totalCalories">Total Calories</string>
 </resources>
