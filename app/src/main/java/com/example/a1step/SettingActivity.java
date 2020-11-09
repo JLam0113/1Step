@@ -1,5 +1,6 @@
 package com.example.a1step;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,6 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SettingActivity extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -27,8 +30,22 @@ public class SettingActivity extends AppCompatActivity {
         final EditText newPass = findViewById(R.id.editNewPass);
         final EditText confPass = findViewById(R.id.editConfPass);
         final Button change = findViewById(R.id.btnChange);
+        final Button delete = findViewById(R.id.btnDelete);
         auth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+        delete.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View v) {
+                                            user.delete();
+                                          final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
+                                          userNode.removeValue();
+                                          Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
+                                          startActivity(intent);
+                                          finish();
+                                      }
+                                  });
 
         change.setOnClickListener(new View.OnClickListener() {
             @Override
