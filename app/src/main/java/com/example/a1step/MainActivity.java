@@ -23,13 +23,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private SensorManager sensorManager;
     private int stepCounter = 0;
     private int totalSteps = 0;
+    private double totalCals = 0;
     private int tempSteps = 0;
     private FirebaseDatabase db;
+    private User user;
+    private DatabaseReference ref;
+    TextView tCalories;
+    TextView tSteps;
+    TextView stepsText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,25 +45,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final Button settings = findViewById(R.id.btnSetting);
         final Button leaderboard = findViewById(R.id.btnLeader);
+        tCalories = findViewById(R.id.totalCals);
+        tSteps = findViewById(R.id.totalSteps);
+        stepsText = findViewById(R.id.steps);
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
-        String temp = "users/" + auth.getCurrentUser().getUid() + "/totalSteps";
-        DatabaseReference ref = db.getReference(temp);
+        //String temp = "users/" + auth.getCurrentUser().getUid() + "/totalSteps";
+        //String temp = "users/" + auth.getCurrentUser().getUid();
+        ref = db.getReference("users/" + auth.getCurrentUser().getUid());
+        Query query = db.getReference("users/" + auth.getCurrentUser().getUid());
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         sensorManager.registerListener(sensorEventListener, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                totalSteps = dataSnapshot.getValue(Integer.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        query.addListenerForSingleValueEvent(valueEventListener);
 
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,11 +70,32 @@ public class MainActivity extends AppCompatActivity {
         leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                user.setTotalSteps(totalSteps);
+                totalCals += (totalSteps * 0.045);
+                user.setTotalCalories(totalCals);
+                ref.setValue(user);
                 Intent intent = new Intent(MainActivity.this, LeaderBActivity.class);
                 startActivity(intent);
             }
         });
         }
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                totalSteps = user.getTotalSteps();
+                totalCals = user.getTotalCalories();
+                tSteps.setText(String.valueOf(totalSteps));
+                tCalories.setText(Double.toString(totalCals));
+                stepsText.setText(String.valueOf(totalSteps));
+                }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
 
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
@@ -82,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
             }
             stepCounter = (int) sensorEvent.values[0] - tempSteps;
             totalSteps += stepCounter;
-            TextView stepsText = findViewById(R.id.steps);
             stepsText.setText(stepCounter);
         }
 
@@ -94,7 +116,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onDestroy() {
         super.onDestroy();
-        auth.getInstance().signOut();
+        //auth.getInstance().signOut();
         // Update database with steps
+        user.setTotalSteps(totalSteps);
+        totalCals += totalSteps * 0.045;
+        user.setTotalCalories(totalCals);
+        ref.setValue(user);
     }
 }

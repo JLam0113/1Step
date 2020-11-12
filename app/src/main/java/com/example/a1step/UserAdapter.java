@@ -32,7 +32,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void onBindViewHolder(@NonNull UserAdapter.UserViewHolder holder, int position) {
         User user = userList.get(position);
         holder.email.setText(user.getEmail());
-        holder.totalSteps.setText(Double.toString(user.getTotalSteps()));
+        holder.totalSteps.setText(Integer.toString(user.getTotalSteps()));
         holder.totalCalories.setText(Double.toString(user.getTotalCalories()));
     }
 

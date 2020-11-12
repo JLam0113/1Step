@@ -7,9 +7,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class User {
     private String email;
-    double tSteps, tCalories;
+    double tCalories;
+    int tSteps;
 
-    public User(String email, double tSteps, double tCalories) {
+    public User(String email, int tSteps, double tCalories) {
         this.email = email;
         this.tSteps = tSteps;
         this.tCalories = tCalories;
@@ -26,11 +27,11 @@ public class User {
         return email;
     }
 
-    public void setTotalSteps(double tSteps){
+    public void setTotalSteps(int tSteps){
         this.tSteps = tSteps;
     }
 
-    public double getTotalSteps(){
+    public int getTotalSteps(){
         return tSteps;
     }
 

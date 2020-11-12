@@ -38,7 +38,7 @@ public class SettingActivity extends AppCompatActivity {
         delete.setOnClickListener(new View.OnClickListener() {
                                       @Override
                                       public void onClick(View v) {
-                                            user.delete();
+                                          user.delete();
                                           final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
                                           userNode.removeValue();
                                           Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
@@ -82,10 +82,5 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    protected void onDestroy() {
-        super.onDestroy();
-        auth.getInstance().signOut();
     }
 }
