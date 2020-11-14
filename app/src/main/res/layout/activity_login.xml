@@ -84,6 +84,7 @@
             android:layout_height="78dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="36dp"
+            android:layout_marginEnd="20dp"
             android:gravity="end"
             android:text="@string/_1step"
             android:textColor="#1C1B1B"
