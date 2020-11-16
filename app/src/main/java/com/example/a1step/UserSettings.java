@@ -5,6 +5,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.sql.Date;
+
 @Entity(tableName = "user_settings")
 public class UserSettings {
     //Remove auto generate later
@@ -12,25 +14,45 @@ public class UserSettings {
     @PrimaryKey
     @NonNull
     @ColumnInfo
-    private String email;
+    private String id;
 
     @ColumnInfo
-    public String dailyGoal;
+    public int dailyGoal;
+
+    @ColumnInfo
+    public int dailySteps;
+
+    @ColumnInfo
+    public String date;
 
     @NonNull
-    public String getEmail() {
-        return email;
+    public String getId() {
+        return id;
     }
 
-    public void setEmail(@NonNull String email) {
-        this.email = email;
+    public void setId(@NonNull String id){
+        this.id = id;
     }
 
-    public String getNickname() {
+    public void setDailyGoal(@NonNull int dailyGoal) {
+        this.dailyGoal = dailyGoal;
+    }
+
+    public int getDailyGoal() {
         return dailyGoal;
     }
 
-    public void setNickname(String dailyGoal) {
-        this.dailyGoal = dailyGoal;
+    public void setDate(@NonNull String date) {
+        this.date = date;
+    }
+
+    public String getDate(){return date;}
+
+    public int getDailySteps(){
+        return dailySteps;
+    }
+
+    public void setDailySteps(@NonNull int dailySteps){
+        this.dailySteps = dailySteps;
     }
 }
