@@ -6,7 +6,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Date;
 import java.text.DecimalFormat;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
     private UserSettings userSettings;
@@ -60,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
         //String temp = "users/" + auth.getCurrentUser().getUid();
         ref = db.getReference("users/" + auth.getCurrentUser().getUid());
         Query query = db.getReference("users/" + auth.getCurrentUser().getUid());
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        sensorManager.registerListener(sensorEventListener, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorEventListener, stepSensor, SensorManager.SENSOR_DELAY_UI);
         query.addListenerForSingleValueEvent(valueEventListener);
 
         email = findViewById(R.id.emailText);
@@ -124,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 tempSteps = (int) sensorEvent.values[0];
             }
             stepCounter = (int) sensorEvent.values[0] - tempSteps;
+            stepCounter = stepCounter/3;
             totalSteps += stepCounter;
             dailySteps += stepCounter;
             totalCals += stepCounter * 0.045;
