@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.sql.Date;
+
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
 
@@ -62,6 +64,15 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Authentication failed, incorrect email or password!", Toast.LENGTH_LONG).show();
                                     }
                                 } else {
+                                    UserSettings userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
+                                    if(userSettings == null){
+                                        userSettings = new UserSettings();
+                                        userSettings.setDailySteps(0);
+                                        userSettings.setDate(new Date(System.currentTimeMillis()).toString());
+                                        userSettings.setDailyGoal(0);
+                                        userSettings.setId(auth.getCurrentUser().getUid());
+                                        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().insert(userSettings);
+                                    }
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();

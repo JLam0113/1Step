@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
@@ -33,7 +34,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         User user = userList.get(position);
         holder.email.setText(user.getEmail());
         holder.totalSteps.setText(Integer.toString(user.getTotalSteps()));
-        holder.totalCalories.setText(Double.toString(user.getTotalCalories()));
+        DecimalFormat currency= new DecimalFormat("###,###.##");
+        holder.totalCalories.setText(currency.format(user.getTotalCalories()));
     }
 
     @Override

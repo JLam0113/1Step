@@ -27,6 +27,7 @@ public abstract class UserSettingsRoomDB extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             UserSettingsRoomDB.class, "user_database")
+                            .allowMainThreadQueries()
                             .build();
                 }
             }

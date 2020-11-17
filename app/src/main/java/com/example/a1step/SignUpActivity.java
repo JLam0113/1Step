@@ -66,8 +66,12 @@ public class SignUpActivity extends AppCompatActivity {
                                     } else {
                                         User user = new User(email2, 0,0);
                                         final DatabaseReference userNode = db.getReference("users/" + auth.getCurrentUser().getUid());
-                                        doTask dt = new doTask();
-                                        dt.execute();
+                                        UserSettings userSettings = new UserSettings();
+                                        userSettings.setDailyGoal(0);
+                                        userSettings.setDailySteps(0);
+                                        userSettings.setDate(new Date(System.currentTimeMillis()).toString());
+                                        userSettings.setId(auth.getCurrentUser().getUid());
+                                        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().insert(userSettings);
                                         userNode.setValue(user);
                                         startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
                                         finish();
@@ -76,19 +80,5 @@ public class SignUpActivity extends AppCompatActivity {
                             });
                 }
             });
-        }
-
-        class doTask extends AsyncTask<Void, Void, Void> {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                UserSettings userSettings = new UserSettings();
-                userSettings.setDailyGoal(0);
-                userSettings.setDailySteps(0);
-                userSettings.setDate(new Date(System.currentTimeMillis()).toString());
-                userSettings.setId(auth.getCurrentUser().getUid());
-                UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().insert(userSettings);
-                return null;
-            }
         }
     }

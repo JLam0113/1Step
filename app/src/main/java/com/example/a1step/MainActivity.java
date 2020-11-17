@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,12 +23,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Date;
+import java.text.DecimalFormat;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
+    private UserSettings userSettings;
     private FirebaseAuth auth;
     private SensorManager sensorManager;
     private int stepCounter = 0;
     private int totalSteps = 0;
     private double totalCals = 0;
+    private int dailySteps = 0;
     private int tempSteps = 0;
     private FirebaseDatabase db;
     private User user;
@@ -35,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tCalories;
     TextView tSteps;
     TextView stepsText;
+    TextView email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +65,17 @@ public class MainActivity extends AppCompatActivity {
         sensorManager.registerListener(sensorEventListener, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
         query.addListenerForSingleValueEvent(valueEventListener);
 
-        // Initialize nickname textView
-        TextView nickname = findViewById(R.id.nicknameText);
+        email = findViewById(R.id.emailText);
+
+        userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
+
+        Date date = new Date(System.currentTimeMillis());
+        if(!userSettings.getDate().equals(date.toString())){
+            userSettings.setDate(date.toString());
+            userSettings.setDailySteps(0);
+        }
+        dailySteps = userSettings.getDailySteps();
+        stepsText.setText(String.valueOf(dailySteps));
 
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,9 +89,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 user.setTotalSteps(totalSteps);
-                totalCals += (totalSteps * 0.045);
                 user.setTotalCalories(totalCals);
                 ref.setValue(user);
+                userSettings.setDailySteps(dailySteps);
+                UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
                 Intent intent = new Intent(MainActivity.this, LeaderBActivity.class);
                 startActivity(intent);
             }
@@ -86,9 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 user = dataSnapshot.getValue(User.class);
                 totalSteps = user.getTotalSteps();
                 totalCals = user.getTotalCalories();
+                email.setText(user.getEmail());
                 tSteps.setText(String.valueOf(totalSteps));
-                tCalories.setText(Double.toString(totalCals));
-                stepsText.setText(String.valueOf(totalSteps));
+                DecimalFormat currency= new DecimalFormat("###,###.##");
+                tCalories.setText(currency.format(totalCals));
                 }
 
             @Override
@@ -97,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-    private SensorEventListener sensorEventListener = new SensorEventListener() {
+    SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             if(tempSteps<1){
@@ -105,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
             }
             stepCounter = (int) sensorEvent.values[0] - tempSteps;
             totalSteps += stepCounter;
-            stepsText.setText(stepCounter);
+            dailySteps += stepCounter;
+            totalCals += stepCounter * 0.045;
+            stepsText.setText(String.valueOf(dailySteps));
         }
 
         @Override
@@ -116,11 +138,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onDestroy() {
         super.onDestroy();
-        //auth.getInstance().signOut();
         // Update database with steps
         user.setTotalSteps(totalSteps);
-        totalCals += totalSteps * 0.045;
         user.setTotalCalories(totalCals);
+        userSettings.setDailySteps(dailySteps);
+        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
         ref.setValue(user);
     }
 }

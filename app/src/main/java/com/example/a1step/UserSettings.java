@@ -9,7 +9,6 @@ import java.sql.Date;
 
 @Entity(tableName = "user_settings")
 public class UserSettings {
-    //Remove auto generate later
 
     @PrimaryKey
     @NonNull
