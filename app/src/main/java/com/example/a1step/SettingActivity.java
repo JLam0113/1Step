@@ -3,6 +3,7 @@ package com.example.a1step;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +23,11 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SettingActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
-
+    private DatabaseReference ref;
+    private UserSettings userSettings;
+    private int dailySteps;
+    private int totalSteps;
+    private int totalCals;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +40,8 @@ public class SettingActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
+        ref = db.getReference("users/" + auth.getCurrentUser().getUid());
+        userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
 
         delete.setOnClickListener(new View.OnClickListener() {
                                       @Override
@@ -82,5 +90,26 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
+        //For bottom navigation menu
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.settingsPage);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.settingsPage:
+                        return true;
+                    case R.id.homePage:
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                    case R.id.leaderboardPage:
+                        startActivity(new Intent(getApplicationContext(), LeaderBActivity.class));
+                        overridePendingTransition(0, 0);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 }

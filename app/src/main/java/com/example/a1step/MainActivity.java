@@ -8,8 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -48,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button settings = findViewById(R.id.btnSetting);
-        final Button leaderboard = findViewById(R.id.btnLeader);
         tCalories = findViewById(R.id.totalCals);
         tSteps = findViewById(R.id.totalSteps);
         stepsText = findViewById(R.id.steps);
@@ -77,27 +73,6 @@ public class MainActivity extends AppCompatActivity {
         dailySteps = userSettings.getDailySteps();
         stepsText.setText(String.valueOf(dailySteps));
 
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        leaderboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                user.setTotalSteps(totalSteps);
-                user.setTotalCalories(totalCals);
-                ref.setValue(user);
-                userSettings.setDailySteps(dailySteps);
-                UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
-                Intent intent = new Intent(MainActivity.this, LeaderBActivity.class);
-                startActivity(intent);
-            }
-        });
-
         //For bottom navigation menu
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.homePage);
@@ -106,12 +81,22 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.settingsPage:
+                        user.setTotalSteps(totalSteps);
+                        user.setTotalCalories(totalCals);
+                        ref.setValue(user);
+                        userSettings.setDailySteps(dailySteps);
+                        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
                         startActivity(new Intent(getApplicationContext(), SettingActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.homePage:
                         return true;
                     case R.id.leaderboardPage:
+                        user.setTotalSteps(totalSteps);
+                        user.setTotalCalories(totalCals);
+                        ref.setValue(user);
+                        userSettings.setDailySteps(dailySteps);
+                        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
                         startActivity(new Intent(getApplicationContext(), LeaderBActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
