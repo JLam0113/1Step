@@ -23,11 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SettingActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
-    private DatabaseReference ref;
-    private UserSettings userSettings;
-    private int dailySteps;
-    private int totalSteps;
-    private int totalCals;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +35,6 @@ public class SettingActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
-        ref = db.getReference("users/" + auth.getCurrentUser().getUid());
-        userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
 
         delete.setOnClickListener(new View.OnClickListener() {
                                       @Override
