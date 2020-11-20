@@ -10,4 +10,10 @@
     <string name="appicon">appIcon</string>
     <string name="totalSteps">Total Steps</string>
     <string name="totalCalories">Total Calories</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="enter_current_password">Enter Current Password</string>
+    <string name="caution_delete">CAUTION: Once an account has been deleted it cannot be recovered.</string>
 </resources>

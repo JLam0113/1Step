@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="20sp"
+            android:layout_marginBottom="80sp"
             android:orientation="vertical">
 
             <TextView
@@ -78,10 +79,12 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="5sp" />
+                android:layout_marginLeft="5sp"
+                android:layout_marginBottom="70sp" />
 
         </LinearLayout>
     </ScrollView>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
