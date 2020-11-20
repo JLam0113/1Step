@@ -136,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
             dailySteps += stepCounter;
             totalCals += stepCounter * 0.045;
             stepsText.setText(String.valueOf(dailySteps));
+            //Update totals
+            tSteps.setText(String.valueOf(totalSteps));
+            DecimalFormat currency= new DecimalFormat("###,###.##");
+            tCalories.setText(currency.format(totalCals));
         }
 
         @Override
