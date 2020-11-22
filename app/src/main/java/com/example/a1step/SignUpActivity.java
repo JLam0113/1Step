@@ -1,7 +1,6 @@
 package com.example.a1step;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -69,6 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         UserSettings userSettings = new UserSettings();
                                         userSettings.setDailyGoal(0);
                                         userSettings.setDailySteps(0);
+                                        userSettings.setNotification(false);
                                         userSettings.setDate(new Date(System.currentTimeMillis()).toString());
                                         userSettings.setId(auth.getCurrentUser().getUid());
                                         UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().insert(userSettings);

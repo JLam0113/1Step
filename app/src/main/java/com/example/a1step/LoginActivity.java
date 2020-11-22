@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                                         userSettings.setDailySteps(0);
                                         userSettings.setDate(new Date(System.currentTimeMillis()).toString());
                                         userSettings.setDailyGoal(0);
+                                        userSettings.setNotification(false);
                                         userSettings.setId(auth.getCurrentUser().getUid());
                                         UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().insert(userSettings);
                                     }

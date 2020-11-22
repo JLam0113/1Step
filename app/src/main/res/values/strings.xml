@@ -11,9 +11,22 @@
     <string name="totalSteps">Total Steps</string>
     <string name="totalCalories">Total Calories</string>
     <string name="delete_account">Delete Account</string>
-    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="confirm_new_password">Confirm new password</string>
     <string name="change_password">Change Password</string>
-    <string name="enter_new_password">Enter New Password</string>
-    <string name="enter_current_password">Enter Current Password</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="enter_current_password">Enter current password</string>
     <string name="caution_delete">CAUTION: Once an account has been deleted it cannot be recovered.</string>
+    <string name="notification">Push Notifications</string>
+    <string name="daily_goal">Daily Goal</string>
+    <string name="daily_goal_hint">Enter your daily step goal</string>
+    <string name="set_daily_goal">Set Daily Goal</string>
+    <string name="enter_password">Enter password</string>
+    <string name="register2">Register</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="enter_email">Enter email</string>
+    <string name="total_steps_taken">Total Steps Taken:</string>
+    <string name="total_calories_burned">Total Calories Burned:</string>
+    <string name="total_steps_today">Total Steps Today:</string>
+    <string name="daily_step_goal">Daily Step Goal:</string>
+    <string name="welcome">Welcome,</string>
 </resources>
