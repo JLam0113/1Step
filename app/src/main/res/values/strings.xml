@@ -24,4 +24,9 @@
     <string name="register2">Register</string>
     <string name="confirm_password">Confirm password</string>
     <string name="enter_email">Enter email</string>
+    <string name="total_steps_taken">Total Steps Taken:</string>
+    <string name="total_calories_burned">Total Calories Burned:</string>
+    <string name="total_steps_today">Total Steps Today:</string>
+    <string name="daily_step_goal">Daily Step Goal:</string>
+    <string name="welcome">Welcome,</string>
 </resources>
