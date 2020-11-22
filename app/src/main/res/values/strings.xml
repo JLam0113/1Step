@@ -16,4 +16,8 @@
     <string name="enter_new_password">Enter New Password</string>
     <string name="enter_current_password">Enter Current Password</string>
     <string name="caution_delete">CAUTION: Once an account has been deleted it cannot be recovered.</string>
+    <string name="notification">Push Notifications</string>
+    <string name="daily_goal">Daily Goal</string>
+    <string name="daily_goal_hint">Enter your Daily Goal</string>
+    <string name="set_daily_goal">Set Daily Goal</string>
 </resources>

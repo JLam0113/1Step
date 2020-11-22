@@ -24,6 +24,9 @@ public class UserSettings {
     @ColumnInfo
     public String date;
 
+    @ColumnInfo
+    public boolean notification;
+
     @NonNull
     public String getId() {
         return id;
@@ -54,4 +57,10 @@ public class UserSettings {
     public void setDailySteps(@NonNull int dailySteps){
         this.dailySteps = dailySteps;
     }
+
+    public void setNotification(boolean notification){
+        this.notification = notification;
+    }
+
+    public boolean getNotification(){return notification;}
 }

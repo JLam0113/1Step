@@ -1,17 +1,23 @@
 package com.example.a1step;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.sql.Date;
 import java.text.DecimalFormat;
@@ -34,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private double totalCals = 0;
     private int dailySteps = 0;
     private int tempSteps = 0;
+    private int dailyGoal = 0;
     private FirebaseDatabase db;
     private User user;
     private DatabaseReference ref;
+    private boolean n;
     TextView tCalories;
     TextView tSteps;
     TextView stepsText;
@@ -49,10 +59,9 @@ public class MainActivity extends AppCompatActivity {
         tCalories = findViewById(R.id.totalCals);
         tSteps = findViewById(R.id.totalSteps);
         stepsText = findViewById(R.id.steps);
+        final TextView goal = findViewById(R.id.goal);
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
-        //String temp = "users/" + auth.getCurrentUser().getUid() + "/totalSteps";
-        //String temp = "users/" + auth.getCurrentUser().getUid();
         ref = db.getReference("users/" + auth.getCurrentUser().getUid());
         Query query = db.getReference("users/" + auth.getCurrentUser().getUid());
 
@@ -62,16 +71,47 @@ public class MainActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(valueEventListener);
 
         email = findViewById(R.id.emailText);
-
         userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
+        dailyGoal = userSettings.getDailyGoal();
+        goal.setText(String.valueOf(userSettings.getDailyGoal()));
+        dailySteps = userSettings.getDailySteps();
+        stepsText.setText(String.valueOf(dailySteps));
+
+        if(userSettings.getNotification()) {
+            n = true;
+            //UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel mChannel = notificationManager.getNotificationChannel("M_CH_ID");
+                if (mChannel == null) {
+                    mChannel = new NotificationChannel("M_CH_ID", "Daily Goal", importance);
+                    mChannel.enableVibration(true);
+                    mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    notificationManager.createNotificationChannel(mChannel);
+                }
+            }
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), "M_CH_ID");
+
+            notificationBuilder.setAutoCancel(true)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.sneaker)
+                    .setContentTitle("Daily Goal")
+                    .setContentText("Progress: " + dailySteps + "/" + dailyGoal)
+                    .setContentInfo("Info");
+
+            Notification notif = notificationBuilder.build();
+            notif.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+            notificationManager.notify(1, notif);
+    }
+        else n = false;
 
         Date date = new Date(System.currentTimeMillis());
         if(!userSettings.getDate().equals(date.toString())){
             userSettings.setDate(date.toString());
             userSettings.setDailySteps(0);
         }
-        dailySteps = userSettings.getDailySteps();
-        stepsText.setText(String.valueOf(dailySteps));
 
         //For bottom navigation menu
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -85,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
                         user.setTotalCalories(totalCals);
                         ref.setValue(user);
                         userSettings.setDailySteps(dailySteps);
+                        userSettings.setDailyGoal(dailyGoal);
+                        userSettings.setNotification(n);
                         UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
                         startActivity(new Intent(getApplicationContext(), SettingActivity.class));
                         overridePendingTransition(0, 0);
@@ -96,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                         user.setTotalCalories(totalCals);
                         ref.setValue(user);
                         userSettings.setDailySteps(dailySteps);
+                        userSettings.setDailyGoal(dailyGoal);
+                        userSettings.setNotification(n);
                         UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
                         startActivity(new Intent(getApplicationContext(), LeaderBActivity.class));
                         overridePendingTransition(0, 0);

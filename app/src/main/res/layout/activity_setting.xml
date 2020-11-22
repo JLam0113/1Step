@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,12 +25,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="40dp"
                 android:text="@string/delete_account"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnChange" />
 
@@ -71,12 +73,12 @@
                 android:layout_marginEnd="40dp"
                 android:ems="10"
                 android:hint="@string/enter_current_password"
+                android:importantForAutofill="no"
                 android:inputType="textPassword"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <EditText
                 android:id="@+id/editNewPass"
@@ -87,12 +89,12 @@
                 android:layout_marginEnd="40dp"
                 android:ems="10"
                 android:hint="@string/enter_new_password"
+                android:importantForAutofill="no"
                 android:inputType="textPassword"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editCurrPass"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/editCurrPass" />
 
             <EditText
                 android:id="@+id/editConfPass"
@@ -103,12 +105,12 @@
                 android:layout_marginEnd="40dp"
                 android:ems="10"
                 android:hint="@string/confirm_new_password"
+                android:importantForAutofill="no"
                 android:inputType="textPassword"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editNewPass"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/editNewPass" />
 
             <Button
                 android:id="@+id/btnChange"
@@ -132,10 +134,62 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView10" />
+                app:layout_constraintTop_toBottomOf="@+id/textView10"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="188dp"
+                android:layout_marginEnd="40dp"
+                android:text="@string/daily_goal"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnChange" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/notification"
+                android:layout_width="183dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="184dp"
+                android:layout_marginBottom="52dp"
+                android:text="@string/notification"
+                android:textOff="OFF"
+                android:textOn="ON"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:showText="true" />
+
+            <EditText
+                android:id="@+id/dailyGoal"
+                android:layout_width="196dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:hint="@string/daily_goal_hint"
+                android:inputType="number"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+            <Button
+                android:id="@+id/btnDaily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="19dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/set_daily_goal"
+                app:layout_constraintStart_toEndOf="@+id/dailyGoal"
+                app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
