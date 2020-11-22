@@ -1,13 +1,9 @@
 package com.example.a1step;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SettingActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
+    // For daily step goal
     private UserSettings userSettings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,25 +34,20 @@ public class SettingActivity extends AppCompatActivity {
         final EditText password = findViewById(R.id.editCurrPass);
         final EditText newPass = findViewById(R.id.editNewPass);
         final EditText confPass = findViewById(R.id.editConfPass);
-        final EditText dailyGoal = findViewById(R.id.dailyGoal);
         final Button change = findViewById(R.id.btnChange);
         final Button delete = findViewById(R.id.btnDelete);
-        final Button setGoal = findViewById(R.id.btnDaily);
-        final SwitchCompat notification = findViewById(R.id.notification);
+        // For daily goal
+        final Button goal = findViewById(R.id.updateGoalButton);
+        final EditText enterGoal = findViewById(R.id.updateGoal);
+        enterGoal.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
         auth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
-        userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
-
-        if(userSettings.getNotification()){
-            notification.setChecked(true);
-        }
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 user.delete();
-                Toast.makeText(SettingActivity.this, "Your account has successfully been deleted.", Toast.LENGTH_SHORT).show();
                 final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
                 userNode.removeValue();
                 Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
@@ -100,87 +91,23 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        setGoal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    int dailyGoal2 = Integer.parseInt(dailyGoal.getText().toString().trim());
-                    userSettings.setDailyGoal(dailyGoal2);
+        //For setting daily step goal
+        userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
+        goal.setOnClickListener((view) -> {
+            try {
+                int dGoal = Integer.parseInt(enterGoal.getText().toString());
+                if (dGoal <= 0)
+                    Toast.makeText(SettingActivity.this, "Daily step goal must be greater than zero.", Toast.LENGTH_SHORT).show();
+                else {
+                    userSettings.setDailyGoal(dGoal);
                     UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
-                    Toast.makeText(SettingActivity.this, "Your daily step goal has been updated.", Toast.LENGTH_SHORT).show();
-                } catch (NumberFormatException e) {
-                    Toast.makeText(SettingActivity.this, "Please enter a daily step goal.", Toast.LENGTH_SHORT).show();
+                    enterGoal.setText("");
+                    Toast.makeText(SettingActivity.this, "Daily step goal changed to " + userSettings.getDailyGoal() + " steps.", Toast.LENGTH_SHORT).show();
                 }
-                if(userSettings.getNotification()) {
-                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-                        int importance = NotificationManager.IMPORTANCE_HIGH;
-                        NotificationChannel mChannel = notificationManager.getNotificationChannel("M_CH_ID");
-                        if (mChannel == null) {
-                            mChannel = new NotificationChannel("M_CH_ID", "Daily Goal", importance);
-                            mChannel.enableVibration(true);
-                            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                            notificationManager.createNotificationChannel(mChannel);
-                        }
-                    }
-                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), "M_CH_ID");
-
-                    notificationBuilder.setAutoCancel(true)
-                            .setDefaults(Notification.DEFAULT_ALL)
-                            .setWhen(System.currentTimeMillis())
-                            .setSmallIcon(R.drawable.sneaker)
-                            .setContentTitle("Daily Goal")
-                            .setContentText("Progress: " + userSettings.getDailySteps() + "/" + userSettings.getDailyGoal())
-                            .setContentInfo("Info");
-
-                    Notification notif = notificationBuilder.build();
-                    notif.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
-                    notificationManager.notify(1, notif);
-                }
+            } catch(NumberFormatException e){
+                Toast.makeText(SettingActivity.this, "Invalid step goal, please enter an integer greater than zero.", Toast.LENGTH_SHORT).show();
             }
         });
-
-        notification.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-
-            public void onClick(View view) {
-                NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                if (notification.isChecked()){
-                    userSettings.setNotification(true);
-                    UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
-                    if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-                        int importance = NotificationManager.IMPORTANCE_HIGH;
-                        NotificationChannel mChannel = notificationManager.getNotificationChannel("M_CH_ID");
-                        if (mChannel == null) {
-                            mChannel = new NotificationChannel("M_CH_ID", "Daily Goal", importance);
-                            mChannel.enableVibration(true);
-                            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                            notificationManager.createNotificationChannel(mChannel);
-                        }
-                    }
-                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), "M_CH_ID");
-
-                    notificationBuilder.setAutoCancel(true)
-                            .setDefaults(Notification.DEFAULT_ALL)
-                            .setWhen(System.currentTimeMillis())
-                            .setSmallIcon(R.drawable.sneaker)
-                            .setContentTitle("Daily Goal")
-                            .setContentText("Progress: " + userSettings.getDailySteps() + "/"+userSettings.getDailyGoal())
-                            .setContentInfo("Info");
-
-                    Notification notif = notificationBuilder.build();
-                    notif.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
-                    notificationManager.notify(1, notif);
-                }
-                else {
-                    userSettings.setNotification(false);
-                    UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
-                    notificationManager.cancelAll();
-                }
-
-            }});
-
 
         //For bottom navigation menu
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
