@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     TextView tSteps;
     TextView stepsText;
     TextView email;
+    //For daily goal
+    TextView tGoal;
+    private int dailyGoal = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         tCalories = findViewById(R.id.totalCals);
         tSteps = findViewById(R.id.totalSteps);
         stepsText = findViewById(R.id.steps);
+        //For daily goal
+        tGoal = findViewById(R.id.showGoal);
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
         //String temp = "users/" + auth.getCurrentUser().getUid() + "/totalSteps";
@@ -72,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
         }
         dailySteps = userSettings.getDailySteps();
         stepsText.setText(String.valueOf(dailySteps));
+
+        // For displaying goal
+        dailyGoal = userSettings.getDailyGoal();
+        if (dailyGoal == 0)
+            tGoal.setText("");
+        else
+            tGoal.setText("daily goal: " + String.valueOf(dailyGoal) + " steps");
 
         //For bottom navigation menu
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -135,8 +147,9 @@ public class MainActivity extends AppCompatActivity {
             totalSteps += stepCounter;
             dailySteps += stepCounter;
             totalCals += stepCounter * 0.045;
+            //Update daily steps seen on screen
             stepsText.setText(String.valueOf(dailySteps));
-            //Update totals
+            //Update totals seen on screen
             tSteps.setText(String.valueOf(totalSteps));
             DecimalFormat currency= new DecimalFormat("###,###.##");
             tCalories.setText(currency.format(totalCals));

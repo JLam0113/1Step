@@ -3,6 +3,7 @@ package com.example.a1step;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SettingActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
+    // For daily step goal
+    private UserSettings userSettings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,21 +36,25 @@ public class SettingActivity extends AppCompatActivity {
         final EditText confPass = findViewById(R.id.editConfPass);
         final Button change = findViewById(R.id.btnChange);
         final Button delete = findViewById(R.id.btnDelete);
+        // For daily goal
+        final Button goal = findViewById(R.id.updateGoalButton);
+        final EditText enterGoal = findViewById(R.id.updateGoal);
+        enterGoal.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
         auth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
 
         delete.setOnClickListener(new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View v) {
-                                          user.delete();
-                                          final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
-                                          userNode.removeValue();
-                                          Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
-                                          startActivity(intent);
-                                          finish();
-                                      }
-                                  });
+            @Override
+            public void onClick(View v) {
+                user.delete();
+                final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
+                userNode.removeValue();
+                Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         change.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +88,24 @@ public class SettingActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        //For setting daily step goal
+        userSettings = UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().findByUserID(auth.getCurrentUser().getUid());
+        goal.setOnClickListener((view) -> {
+            try {
+                int dGoal = Integer.parseInt(enterGoal.getText().toString());
+                if (dGoal <= 0)
+                    Toast.makeText(SettingActivity.this, "Daily step goal must be greater than zero.", Toast.LENGTH_SHORT).show();
+                else {
+                    userSettings.setDailyGoal(dGoal);
+                    UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+                    enterGoal.setText("");
+                    Toast.makeText(SettingActivity.this, "Daily step goal changed to " + userSettings.getDailyGoal() + " steps.", Toast.LENGTH_SHORT).show();
+                }
+            } catch(NumberFormatException e){
+                Toast.makeText(SettingActivity.this, "Invalid step goal, please enter an integer greater than zero.", Toast.LENGTH_SHORT).show();
             }
         });
 
