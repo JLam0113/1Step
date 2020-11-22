@@ -22,7 +22,6 @@ import androidx.core.app.NotificationCompat;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -54,16 +53,17 @@ public class SettingActivity extends AppCompatActivity {
         }
 
         delete.setOnClickListener(new View.OnClickListener() {
-                                      @Override
-                                      public void onClick(View v) {
-                                          user.delete();
-                                          final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
-                                          userNode.removeValue();
-                                          Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
-                                          startActivity(intent);
-                                          finish();
-                                      }
-                                  });
+            @Override
+            public void onClick(View v) {
+                user.delete();
+                Toast.makeText(SettingActivity.this, "Your account has successfully been deleted.", Toast.LENGTH_SHORT).show();
+                final DatabaseReference userNode = db.getReference(auth.getCurrentUser().getUid());
+                userNode.removeValue();
+                Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         change.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,9 +103,14 @@ public class SettingActivity extends AppCompatActivity {
         setGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int dailyGoal2 = Integer.parseInt(dailyGoal.getText().toString().trim());
-                userSettings.setDailyGoal(dailyGoal2);
-                UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+                try {
+                    int dailyGoal2 = Integer.parseInt(dailyGoal.getText().toString().trim());
+                    userSettings.setDailyGoal(dailyGoal2);
+                    UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+                    Toast.makeText(SettingActivity.this, "Your daily step goal has been updated.", Toast.LENGTH_SHORT).show();
+                } catch (NumberFormatException e) {
+                    Toast.makeText(SettingActivity.this, "Please enter a daily step goal.", Toast.LENGTH_SHORT).show();
+                }
                 if(userSettings.getNotification()) {
                     NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                     if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
