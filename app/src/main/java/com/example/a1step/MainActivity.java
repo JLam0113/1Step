@@ -12,6 +12,7 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -77,35 +78,7 @@ public class MainActivity extends AppCompatActivity {
         dailySteps = userSettings.getDailySteps();
         stepsText.setText(String.valueOf(dailySteps));
 
-        if(userSettings.getNotification()) {
-            n = true;
-            //UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
-            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-                int importance = NotificationManager.IMPORTANCE_HIGH;
-                NotificationChannel mChannel = notificationManager.getNotificationChannel("M_CH_ID");
-                if (mChannel == null) {
-                    mChannel = new NotificationChannel("M_CH_ID", "Daily Goal", importance);
-                    mChannel.enableVibration(true);
-                    mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                    notificationManager.createNotificationChannel(mChannel);
-                }
-            }
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), "M_CH_ID");
-
-            notificationBuilder.setAutoCancel(true)
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.drawable.sneaker)
-                    .setContentTitle("Daily Goal")
-                    .setContentText("Progress: " + dailySteps + "/" + dailyGoal)
-                    .setContentInfo("Info");
-
-            Notification notif = notificationBuilder.build();
-            notif.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
-            notificationManager.notify(1, notif);
-    }
-        else n = false;
+        notification(userSettings);
 
         Date date = new Date(System.currentTimeMillis());
         if(!userSettings.getDate().equals(date.toString())){
@@ -121,26 +94,14 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.settingsPage:
-                        user.setTotalSteps(totalSteps);
-                        user.setTotalCalories(totalCals);
-                        ref.setValue(user);
-                        userSettings.setDailySteps(dailySteps);
-                        userSettings.setDailyGoal(dailyGoal);
-                        userSettings.setNotification(n);
-                        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+                        updateUser();
                         startActivity(new Intent(getApplicationContext(), SettingActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.homePage:
                         return true;
                     case R.id.leaderboardPage:
-                        user.setTotalSteps(totalSteps);
-                        user.setTotalCalories(totalCals);
-                        ref.setValue(user);
-                        userSettings.setDailySteps(dailySteps);
-                        userSettings.setDailyGoal(dailyGoal);
-                        userSettings.setNotification(n);
-                        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+                        updateUser();
                         startActivity(new Intent(getApplicationContext(), LeaderBActivity.class));
                         overridePendingTransition(0, 0);
                         return true;
@@ -192,13 +153,52 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public void updateUser(){
+        user.setTotalSteps(totalSteps);
+        user.setTotalCalories(totalCals);
+        ref.setValue(user);
+        userSettings.setDailySteps(dailySteps);
+        userSettings.setDailyGoal(dailyGoal);
+        userSettings.setNotification(n);
+        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+    }
+
     protected void onDestroy() {
         super.onDestroy();
         // Update database with steps
-        user.setTotalSteps(totalSteps);
-        user.setTotalCalories(totalCals);
-        userSettings.setDailySteps(dailySteps);
-        UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
-        ref.setValue(user);
+        updateUser();
+    }
+
+    public void notification(UserSettings userSettings){
+        if(userSettings.getNotification()) {
+            n = true;
+            //UserSettingsRoomDB.getDatabase(getApplicationContext()).userSettingsDao().updateUser(userSettings);
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel mChannel = notificationManager.getNotificationChannel("M_CH_ID");
+                if (mChannel == null) {
+                    mChannel = new NotificationChannel("M_CH_ID", "Daily Goal", importance);
+                    mChannel.enableVibration(true);
+                    mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    notificationManager.createNotificationChannel(mChannel);
+                }
+            }
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), "M_CH_ID");
+
+            notificationBuilder.setAutoCancel(true)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.sneaker)
+                    .setContentTitle("Daily Goal")
+                    .setContentText("Progress: " + userSettings.getDailySteps() + "/" + userSettings.getDailyGoal())
+                    .setContentInfo("Info");
+
+            Notification notif = notificationBuilder.build();
+            notif.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+            notificationManager.notify(1, notif);
+        }
+        else n = false;
+
     }
 }
